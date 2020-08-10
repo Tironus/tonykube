@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana-nodeip
+  labels:
+    app: kib
+spec:
+  selector:
+    app: kib
+  type: NodePort
+  ports:
+  - name: http
+    port: 5601
+    targetPort: 5601
+    nodePort: 32001

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nso-cip
+  labels:
+    app: nso
+spec:
+  selector:
+    app: nso
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080

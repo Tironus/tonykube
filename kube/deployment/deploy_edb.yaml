@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edb-deployment
+  labels:
+    app: edb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: edb
+  template:
+    metadata:
+      labels:
+        app: edb
+    spec:
+      containers:
+      - name: edb
+        image: elasticsearch:6.8.11
+        ports:
+        - containerPort: 9200
+        env:
+        - name: discovery.type
+          value: single-node

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: log
+  labels:
+    app: log
+spec:
+  selector:
+    app: log
+  type: NodePort
+  ports:
+  - name: http
+    port: 5044
+    targetPort: 5044
+    nodePort: 32000

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kib
+  labels:
+    app: kib
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kib
+  template:
+    metadata:
+      labels:
+        app: kib
+    spec:
+      containers:
+      - name: kib
+        image: kibana:6.8.11
+        ports:
+        - containerPort: 5601

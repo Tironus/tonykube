@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nso
+  labels:
+    app: nso
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nso
+  template:
+    metadata:
+      labels:
+        app: nso
+    spec:
+      containers:
+      - name: nso
+        image: tgionfriddo/nso:1.9
+        ports:
+        - containerPort: 8080
