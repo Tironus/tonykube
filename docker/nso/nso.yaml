@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nso
+  labels:
+    app: nso
+spec:
+  containers:
+  - name: nso
+    image: nso:1.0
+    ports:
+    - containerPort: 8080
+    resources:
+    imagePullPolicy: Never

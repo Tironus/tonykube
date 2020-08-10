@@ -1,0 +1,49 @@
+FROM        docker.io/centos:latest
+
+USER        root:root
+
+ARG         NSO_UN=tony
+ARG         NSO_PW=tony
+
+ENV         container docker
+
+COPY        [--chown=root:root] nso-5.2.2.2.linux.x86_64.installer.bin /root
+COPY        [--chown=root:root] start_nso.sh /root
+COPY        [--chown=root:root] filebeat.yml /root
+COPY        [--chown=root:root] elasticsearch.repo /root
+COPY        [--chown=root:root] filebeat.template.json /root
+
+WORKDIR     /root
+
+RUN         (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
+            systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+            rm -f /lib/systemd/system/multi-user.target.wants/*;\
+            rm -f /etc/systemd/system/*.wants/*;\
+            rm -f /lib/systemd/system/local-fs.target.wants/*; \
+            rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+            rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+            rm -f /lib/systemd/system/basic.target.wants/*;\
+            rm -f /lib/systemd/system/anaconda.target.wants/*;
+
+VOLUME      [ "/sys/fs/cgroup" ]
+
+CMD         ["/usr/sbin/init"]
+
+RUN         chmod +x /root/start_nso.sh && \
+            yum install openssl openssh-server openssh-clients passwd java-1.8.0-openjdk initscripts \
+            ant python3 -y && \
+            pip3 install requests && \
+            sh nso-5.2.2.2.linux.x86_64.installer.bin --system-install --non-interactive && \
+            groupadd ncsadmin && \
+            groupadd ncsoper && \
+            useradd $NSO_UN; echo -e "$NSO_PW\n$NSO_PW" | passwd $NSO_UN && \
+            usermod -aG ncsadmin root && \
+            usermod -aG ncsadmin $NSO_UN && \
+            sed -i '290 d' /etc/ncs/ncs.conf && \
+            sed -i '289 a  <enabled>true</enabled>' /etc/ncs/ncs.conf && \
+            mv -f /root/elasticsearch.repo /etc/yum.repos.d/elasticsearch.repo && \
+            yum --enablerepo=elasticsearch  install filebeat -y && \
+            mv -f /root/filebeat.yml /etc/filebeat/filebeat.yml && \
+            mv -f /root/filebeat.template.json /etc/filebeat/filebeat.template.json
+
+ENTRYPOINT  ["/bin/bash", "-c", "/root/start_nso.sh"]
