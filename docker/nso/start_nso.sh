@@ -10,6 +10,8 @@ NCS_CONFIG_DIR=${confdir}
 NCS_RUN_DIR=${rundir}
 NCS_LOG_DIR=${logdir}
 
+/etc/init.d/sshd -h ~/.ssh/id_rsa
+
 curl -XPUT 'http://elasticsearch:9200/_template/filebeat' -d@/etc/filebeat/filebeat.template.json -H "Content-Type:application/json"
 /etc/init.d/filebeat start
 

@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
       - name: nso
-        image: tgionfriddo/nso:1.9
+        image: tgionfriddo/nso:1.13
         ports:
         - containerPort: 8080
+        - containerPort: 22

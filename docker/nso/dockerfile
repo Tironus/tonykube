@@ -44,6 +44,15 @@ RUN         chmod +x /root/start_nso.sh && \
             mv -f /root/elasticsearch.repo /etc/yum.repos.d/elasticsearch.repo && \
             yum --enablerepo=elasticsearch  install filebeat -y && \
             mv -f /root/filebeat.yml /etc/filebeat/filebeat.yml && \
-            mv -f /root/filebeat.template.json /etc/filebeat/filebeat.template.json
+            mv -f /root/filebeat.template.json /etc/filebeat/filebeat.template.json && \
+            ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa <<< y && \
+            cp /usr/sbin/sshd /etc/init.d/ && \
+            rm -rf /run/nologin
+
+EXPOSE      8080/tcp
+EXPOSE      22/tcp
+EXPOSE      22/udp
+
+CMD         [ "sh", "/etc/init.d/ssh", "start"]
 
 ENTRYPOINT  ["/bin/bash", "-c", "/root/start_nso.sh"]
